@@ -1,9 +1,7 @@
 from pydantic import BaseModel
 
-class CPU(BaseModel):
+class Motherboard(BaseModel):
     id: int
     name: str
-    cores: int
-    threads: int
     socket: str
     price: int
