@@ -6,4 +6,5 @@ class CPU(BaseModel):
     cores: int
     threads: int
     socket: str
+    power: int
     price: int

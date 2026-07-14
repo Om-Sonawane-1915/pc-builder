@@ -7,6 +7,7 @@ CPUS = [
     cores=6,
     threads=12,
     socket="AM5",
+    power=65,
     price=18999
 ),
 
@@ -16,6 +17,7 @@ CPU(
     cores=14,
     threads=20,
     socket="LGA1700",
+    power=125,
     price=28999
 ),
 
@@ -25,6 +27,7 @@ CPU(
     cores=8,
     threads=16,
     socket="AM5",
+    power=105,
     price=32999
 )
 ]

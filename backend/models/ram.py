@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 
-class Motherboard(BaseModel):
+class RAM(BaseModel):
     id: int
     name: str
-    socket: str
-    ram_type: str
+    capacity: int
+    speed: int
+    type: str
     price: int

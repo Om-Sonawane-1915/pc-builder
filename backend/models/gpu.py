@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-
 class GPU(BaseModel):
     id: int
     name: str
-    vram: int
+    memory: int
+    power: int
     price: int

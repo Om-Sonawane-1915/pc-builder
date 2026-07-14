@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
-class Motherboard(BaseModel):
+class PSU(BaseModel):
     id: int
     name: str
-    socket: str
-    ram_type: str
+    wattage: int
     price: int

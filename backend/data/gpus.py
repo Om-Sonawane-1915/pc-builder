@@ -2,21 +2,18 @@ from backend.models.gpu import GPU
 
 GPUS = [
     GPU(
-        id=1,
-        name="NVIDIA GeForce RTX 5070",
-        vram=12,
-        price=54999
-    ),
-    GPU(
-        id=2,
-        name="AMD Radeon RX 9070 XT",
-        vram=16,
-        price=59999
-    ),
-    GPU(
-        id=3,
-        name="NVIDIA GeForce RTX 5060 Ti",
-        vram=16,
-        price=42999
-    )
+    id=1,
+    name="RTX 4060",
+    memory=8,
+    power=115,
+    price=29999
+),
+
+GPU(
+    id=2,
+    name="RTX 4070",
+    memory=12,
+    power=200,
+    price=54999
+)
 ]
