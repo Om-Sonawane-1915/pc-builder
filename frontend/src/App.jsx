@@ -28,6 +28,7 @@ function App() {
   const [selectedStorage, setSelectedStorage] = useState("");
   const [selectedPSU, setSelectedPSU] = useState("");
   const [result, setResult] = useState(null);
+  const [budget, setBudget] = useState(100000);
 
   useEffect(() => {
   getCPUs().then(setCpus);
@@ -57,6 +58,17 @@ function App() {
       <p className="subtitle">
   Build your perfect PC with compatible components.
 </p>
+
+    <div className="budget-card">
+  <h2>💰 Your Budget</h2>
+
+  <input
+    type="number"
+    value={budget}
+    onChange={(e) => setBudget(Number(e.target.value))}
+    placeholder="Enter Budget"
+  />
+</div>
 
       <div className="grid">
 
@@ -125,6 +137,29 @@ function App() {
       {result.compatible ? "✅ Compatible" : "❌ Not Compatible"}
     </p>
 
+      {result.warnings.length > 0 ? (
+  <div>
+    <h3>Warnings</h3>
+
+    {result.warnings.map((warning, index) => (
+      <p
+        key={index}
+        style={{ color: "#ef4444" }}
+      >
+        ❌ {warning}
+      </p>
+    ))}
+  </div>
+) : (
+  <div>
+    <h3>System Checks</h3>
+
+    <p>✅ CPU socket matches motherboard</p>
+    <p>✅ RAM type is supported</p>
+    <p>✅ PSU wattage is sufficient</p>
+  </div>
+)}
+
     <div className="summary-item">
       <span>CPU</span>
       <span>{result.build.cpu.name}</span>
@@ -162,6 +197,24 @@ function App() {
     <p className="total">
       Total Price: ₹{result.total_price}
     </p>
+
+    {result.total_price <= budget ? (
+  <div className="budget-success">
+    🟢 Under Budget
+
+    <br />
+
+    Remaining: ₹{budget - result.total_price}
+  </div>
+) : (
+  <div className="budget-danger">
+    🔴 Over Budget
+
+    <br />
+
+    Exceeded by: ₹{result.total_price - budget}
+  </div>
+)}
   </div>
 )}
     </div>

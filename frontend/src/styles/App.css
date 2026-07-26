@@ -151,3 +151,46 @@ button:hover {
     margin-bottom:18px;
     font-style:italic;
 }
+
+.budget-card{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:25px;
+}
+
+.budget-card h2{
+    color:#60a5fa;
+    margin-bottom:15px;
+}
+
+.budget-card input{
+    width:100%;
+    padding:12px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    background:#334155;
+    color:white;
+}
+
+.budget-success{
+    margin-top:20px;
+    padding:15px;
+    background:#14532d;
+    border-radius:10px;
+    color:#86efac;
+    font-weight:bold;
+    text-align:center;
+}
+
+.budget-danger{
+    margin-top:20px;
+    padding:15px;
+    background:#7f1d1d;
+    border-radius:10px;
+    color:#fca5a5;
+    font-weight:bold;
+    text-align:center;
+}
