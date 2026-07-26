@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 3rem;
+  color: #60a5fa;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 40px;
+  font-size: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.component-card {
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 20px;
+  transition: 0.3s;
+  border: 1px solid #334155;
+}
+
+.component-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: #60a5fa;
+    box-shadow:
+        0 0 20px rgba(96,165,250,.35),
+        0 0 40px rgba(37,99,235,.15);
+}
+
+.component-card h2 {
+  margin-bottom: 15px;
+  color: #60a5fa;
+}
+
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #334155;
+  color: white;
+  font-size: 15px;
+}
+
+select:focus {
+  outline: 2px solid #60a5fa;
+}
+
+button {
+  margin-top: 35px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(90deg,#2563eb,#3b82f6);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(37,99,235,.5);
+}
+
+.summary-card {
+  margin-top: 40px;
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid #334155;
+}
+
+.summary-card h2 {
+  margin-bottom: 20px;
+  color: #60a5fa;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #334155;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.compatible {
+  color: #22c55e;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.power {
+  margin-top: 20px;
+  color: #cbd5e1;
+}
+
+.total {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.selected-name{
+    font-size:18px;
+    font-weight:bold;
+    color:white;
+    margin-bottom:8px;
+}
+
+.selected-price{
+    color:#38bdf8;
+    font-size:17px;
+    margin-bottom:18px;
+    font-weight:bold;
+}
+
+.not-selected{
+    color:#94a3b8;
+    margin-bottom:18px;
+    font-style:italic;
+}
