@@ -70,6 +70,76 @@ CPUS = [
         gaming_score=94,
         productivity_score=92,
         price=32999
-    )
+    ),
+
+            CPU(
+    id=6,
+    brand="AMD",
+    name="Ryzen 7 7800X3D",
+    generation="Ryzen 7000",
+    cores=8,
+    threads=16,
+    socket="AM5",
+    power=120,
+    gaming_score=100,
+    productivity_score=93,
+    price=36999
+),
+
+CPU(
+    id=7,
+    brand="AMD",
+    name="Ryzen 9 7900",
+    generation="Ryzen 7000",
+    cores=12,
+    threads=24,
+    socket="AM5",
+    power=65,
+    gaming_score=95,
+    productivity_score=97,
+    price=36999
+),
+
+CPU(
+    id=8,
+    brand="AMD",
+    name="Ryzen 9 7900X",
+    generation="Ryzen 7000",
+    cores=12,
+    threads=24,
+    socket="AM5",
+    power=170,
+    gaming_score=97,
+    productivity_score=99,
+    price=41999
+),
+
+CPU(
+    id=9,
+    brand="AMD",
+    name="Ryzen 9 7950X",
+    generation="Ryzen 7000",
+    cores=16,
+    threads=32,
+    socket="AM5",
+    power=170,
+    gaming_score=98,
+    productivity_score=100,
+    price=55999
+),
+
+CPU(
+    id=10,
+    brand="AMD",
+    name="Ryzen 9 9950X",
+    generation="Ryzen 9000",
+    cores=16,
+    threads=32,
+    socket="AM5",
+    power=170,
+    gaming_score=100,
+    productivity_score=100,
+    price=64999
+)
 
 ]
