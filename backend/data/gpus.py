@@ -120,6 +120,138 @@ GPU(
     performance_score=100,
     ray_tracing_score=100,
     price=219999
+),
+
+        GPU(
+    id=11,
+    brand="AMD",
+    name="RX 6600",
+    generation="RX 6000",
+    memory=8,
+    power=132,
+    performance_score=72,
+    ray_tracing_score=50,
+    price=18999
+),
+
+GPU(
+    id=12,
+    brand="AMD",
+    name="RX 6650 XT",
+    generation="RX 6000",
+    memory=8,
+    power=180,
+    performance_score=78,
+    ray_tracing_score=56,
+    price=23999
+),
+
+GPU(
+    id=13,
+    brand="AMD",
+    name="RX 6700 XT",
+    generation="RX 6000",
+    memory=12,
+    power=230,
+    performance_score=86,
+    ray_tracing_score=62,
+    price=31999
+),
+
+GPU(
+    id=14,
+    brand="AMD",
+    name="RX 7600",
+    generation="RX 7000",
+    memory=8,
+    power=165,
+    performance_score=80,
+    ray_tracing_score=60,
+    price=26999
+),
+
+GPU(
+    id=15,
+    brand="AMD",
+    name="RX 7700 XT",
+    generation="RX 7000",
+    memory=12,
+    power=245,
+    performance_score=91,
+    ray_tracing_score=70,
+    price=42999
+),
+
+GPU(
+    id=16,
+    brand="AMD",
+    name="RX 7800 XT",
+    generation="RX 7000",
+    memory=16,
+    power=263,
+    performance_score=94,
+    ray_tracing_score=74,
+    price=51999
+),
+
+GPU(
+    id=17,
+    brand="AMD",
+    name="RX 7900 GRE",
+    generation="RX 7000",
+    memory=16,
+    power=260,
+    performance_score=95,
+    ray_tracing_score=76,
+    price=55999
+),
+
+GPU(
+    id=18,
+    brand="AMD",
+    name="RX 7900 XT",
+    generation="RX 7000",
+    memory=20,
+    power=315,
+    performance_score=98,
+    ray_tracing_score=82,
+    price=74999
+),
+
+GPU(
+    id=19,
+    brand="AMD",
+    name="RX 7900 XTX",
+    generation="RX 7000",
+    memory=24,
+    power=355,
+    performance_score=99,
+    ray_tracing_score=85,
+    price=92999
+),
+
+GPU(
+    id=20,
+    brand="AMD",
+    name="RX 9070",
+    generation="RX 9000",
+    memory=16,
+    power=260,
+    performance_score=98,
+    ray_tracing_score=90,
+    price=69999
+),
+
+GPU(
+    id=21,
+    brand="AMD",
+    name="RX 9070 XT",
+    generation="RX 9000",
+    memory=16,
+    power=304,
+    performance_score=100,
+    ray_tracing_score=93,
+    price=82999
 )
 
 ]
