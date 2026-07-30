@@ -6,6 +6,7 @@ from backend.data.motherboards import MOTHERBOARDS
 from backend.data.rams import RAMS
 from backend.data.storages import STORAGES
 from backend.data.psus import PSUS
+from backend.data.performance import PERFORMANCE
 
 router = APIRouter()
 
@@ -67,12 +68,20 @@ def build_pc(
         storage.price +
         psu.price
     )
-
+    performance = PERFORMANCE.get(
+    (cpu.id, gpu.id),
+    {
+        "1080p": "★★☆☆☆",
+        "1440p": "★☆☆☆☆",
+        "4K": "☆☆☆☆☆"
+    }
+    )
     return {
         "compatible": len(warnings) == 0,
         "warnings": warnings,
         "required_power": required_power,
         "total_price": total_price,
+        "performance": performance,
         "build": {
             "cpu": cpu,
             "gpu": gpu,

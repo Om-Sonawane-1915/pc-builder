@@ -215,6 +215,24 @@ function App() {
     Exceeded by: ₹{result.total_price - budget}
   </div>
 )}
+  <h3 style={{ marginTop: "30px" }}>
+  🎮 Gaming Performance
+</h3>
+
+<div className="summary-item">
+  <span>1080p Ultra</span>
+  <span>{result.performance["1080p"]}</span>
+</div>
+
+<div className="summary-item">
+  <span>1440p High</span>
+  <span>{result.performance["1440p"]}</span>
+</div>
+
+<div className="summary-item">
+  <span>4K Gaming</span>
+  <span>{result.performance["4K"]}</span>
+</div>
   </div>
 )}
     </div>
