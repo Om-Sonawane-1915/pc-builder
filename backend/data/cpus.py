@@ -140,6 +140,104 @@ CPU(
     gaming_score=100,
     productivity_score=100,
     price=64999
+),
+
+        CPU(
+    id=11,
+    brand="Intel",
+    name="Core i5-12400F",
+    generation="12th Gen",
+    cores=6,
+    threads=12,
+    socket="LGA1700",
+    power=65,
+    gaming_score=80,
+    productivity_score=78,
+    price=13999
+),
+
+CPU(
+    id=12,
+    brand="Intel",
+    name="Core i5-13400F",
+    generation="13th Gen",
+    cores=10,
+    threads=16,
+    socket="LGA1700",
+    power=65,
+    gaming_score=86,
+    productivity_score=87,
+    price=18999
+),
+
+CPU(
+    id=13,
+    brand="Intel",
+    name="Core i5-13600K",
+    generation="13th Gen",
+    cores=14,
+    threads=20,
+    socket="LGA1700",
+    power=125,
+    gaming_score=92,
+    productivity_score=94,
+    price=27999
+),
+
+CPU(
+    id=14,
+    brand="Intel",
+    name="Core i5-14600K",
+    generation="14th Gen",
+    cores=14,
+    threads=20,
+    socket="LGA1700",
+    power=125,
+    gaming_score=93,
+    productivity_score=95,
+    price=28999
+),
+
+CPU(
+    id=15,
+    brand="Intel",
+    name="Core i7-13700K",
+    generation="13th Gen",
+    cores=16,
+    threads=24,
+    socket="LGA1700",
+    power=125,
+    gaming_score=95,
+    productivity_score=98,
+    price=38999
+),
+
+CPU(
+    id=16,
+    brand="Intel",
+    name="Core i7-14700K",
+    generation="14th Gen",
+    cores=20,
+    threads=28,
+    socket="LGA1700",
+    power=125,
+    gaming_score=97,
+    productivity_score=99,
+    price=44999
+),
+
+CPU(
+    id=17,
+    brand="Intel",
+    name="Core i9-14900K",
+    generation="14th Gen",
+    cores=24,
+    threads=32,
+    socket="LGA1700",
+    power=125,
+    gaming_score=99,
+    productivity_score=100,
+    price=57999
 )
 
 ]
