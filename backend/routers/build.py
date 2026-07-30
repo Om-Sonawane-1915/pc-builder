@@ -6,7 +6,6 @@ from backend.data.motherboards import MOTHERBOARDS
 from backend.data.rams import RAMS
 from backend.data.storages import STORAGES
 from backend.data.psus import PSUS
-from backend.data.performance import PERFORMANCE
 
 router = APIRouter()
 
@@ -68,20 +67,83 @@ def build_pc(
         storage.price +
         psu.price
     )
-    performance = PERFORMANCE.get(
-    (cpu.id, gpu.id),
-    {
-        "1080p": "★★☆☆☆",
-        "1440p": "★☆☆☆☆",
-        "4K": "☆☆☆☆☆"
-    }
-    )
+
+    # ==========================
+    # Estimated FPS
+    # ==========================
+
+    cpu_score = cpu.gaming_score
+    gpu_score = gpu.performance_score
+
+    combined_score = (cpu_score * 0.35) + (gpu_score * 0.65)
+
+    fps_1080 = int(combined_score * 2.1)
+    fps_1440 = int(combined_score * 1.45)
+    fps_4k = int(combined_score * 0.8)
+
+    # ==========================
+    # Smart Recommendations
+    # ==========================
+
+    recommendations = []
+
+    difference = gpu.performance_score - cpu.gaming_score
+
+    if difference > 15:
+        recommendations.append(
+            "🎮 Your GPU is much stronger than your CPU. A faster processor would improve gaming performance."
+        )
+    elif difference < -15:
+        recommendations.append(
+            "🧠 Your CPU is much stronger than your GPU. Consider upgrading the graphics card."
+        )
+    else:
+        recommendations.append(
+            "✅ CPU and GPU are well balanced."
+        )
+
+    headroom = psu.wattage - required_power
+
+    if headroom >= 250:
+        recommendations.append(
+            "⚡ Excellent PSU headroom for future upgrades."
+        )
+    elif headroom >= 100:
+        recommendations.append(
+            "🔋 PSU has sufficient upgrade headroom."
+        )
+    else:
+        recommendations.append(
+            "⚠ PSU is close to its recommended limit."
+        )
+
+    if total_price <= 70000:
+        recommendations.append(
+            "💰 Great budget gaming build."
+        )
+    elif total_price <= 120000:
+        recommendations.append(
+            "🔥 Excellent mid-range gaming build."
+        )
+    else:
+        recommendations.append(
+            "👑 High-end enthusiast gaming build."
+        )
+
     return {
         "compatible": len(warnings) == 0,
         "warnings": warnings,
         "required_power": required_power,
         "total_price": total_price,
-        "performance": performance,
+
+        "estimated_fps": {
+            "1080p": fps_1080,
+            "1440p": fps_1440,
+            "4k": fps_4k
+        },
+
+        "recommendations": recommendations,
+
         "build": {
             "cpu": cpu,
             "gpu": gpu,
