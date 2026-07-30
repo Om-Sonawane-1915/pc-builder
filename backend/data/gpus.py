@@ -72,6 +72,54 @@ GPUS = [
         performance_score=100,
         ray_tracing_score=100,
         price=179999
-    )
+    ), 
+
+        GPU(
+    id=7,
+    brand="NVIDIA",
+    name="RTX 5070",
+    generation="RTX 5000",
+    memory=12,
+    power=250,
+    performance_score=95,
+    ray_tracing_score=98,
+    price=64999
+),
+
+GPU(
+    id=8,
+    brand="NVIDIA",
+    name="RTX 5070 Ti",
+    generation="RTX 5000",
+    memory=16,
+    power=300,
+    performance_score=98,
+    ray_tracing_score=99,
+    price=88999
+),
+
+GPU(
+    id=9,
+    brand="NVIDIA",
+    name="RTX 5080",
+    generation="RTX 5000",
+    memory=16,
+    power=360,
+    performance_score=99,
+    ray_tracing_score=100,
+    price=119999
+),
+
+GPU(
+    id=10,
+    brand="NVIDIA",
+    name="RTX 5090",
+    generation="RTX 5000",
+    memory=32,
+    power=575,
+    performance_score=100,
+    ray_tracing_score=100,
+    price=219999
+)
 
 ]
