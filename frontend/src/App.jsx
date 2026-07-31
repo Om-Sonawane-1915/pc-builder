@@ -8,7 +8,9 @@ import {
   getRAMs,
   getStorages,
   getPSUs,
-  buildPC
+  buildPC,
+  generateBuild
+
 } from "./services/api";
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
 
   const [result, setResult] = useState(null);
   const [budget, setBudget] = useState(100000);
+  const [purpose, setPurpose] = useState("Gaming");
 
   useEffect(() => {
     getCPUs().then(setCpus);
@@ -39,17 +42,44 @@ function App() {
   }, []);
 
   function handleBuild() {
-    buildPC({
-      cpu_id: selectedCPU,
-      gpu_id: selectedGPU,
-      motherboard_id: selectedMotherboard,
-      ram_id: selectedRAM,
-      storage_id: selectedStorage,
-      psu_id: selectedPSU,
-    }).then((data) => {
-      setResult(data);
-    });
-  }
+  buildPC({
+    cpu_id: selectedCPU,
+    gpu_id: selectedGPU,
+    motherboard_id: selectedMotherboard,
+    ram_id: selectedRAM,
+    storage_id: selectedStorage,
+    psu_id: selectedPSU,
+    purpose: purpose
+  }).then((data) => {
+    setResult(data);
+  });
+}
+
+async function handleAutoBuild() {
+  const data = await generateBuild(
+    budget,
+    purpose
+  );
+
+  setSelectedCPU(data.build.cpu.id);
+  setSelectedGPU(data.build.gpu.id);
+  setSelectedMotherboard(data.build.motherboard.id);
+  setSelectedRAM(data.build.ram.id);
+  setSelectedStorage(data.build.storage.id);
+  setSelectedPSU(data.build.psu.id);
+
+  const result = await buildPC({
+    cpu_id: data.build.cpu.id,
+    gpu_id: data.build.gpu.id,
+    motherboard_id: data.build.motherboard.id,
+    ram_id: data.build.ram.id,
+    storage_id: data.build.storage.id,
+    psu_id: data.build.psu.id,
+    purpose: purpose
+  });
+
+  setResult(result);
+}
 
   return (
     <div className="container">
@@ -69,6 +99,23 @@ function App() {
           placeholder="Enter Budget"
         />
       </div>
+
+      <div className="budget-card">
+
+  <h2>🎯 Build Purpose</h2>
+
+  <select
+    value={purpose}
+    onChange={(e) => setPurpose(e.target.value)}
+  >
+    <option>Gaming</option>
+    <option>Programming</option>
+    <option>Streaming</option>
+    <option>Video Editing</option>
+    <option>Office</option>
+  </select>
+
+</div>
 
       <div className="grid">
 
@@ -127,9 +174,21 @@ function App() {
       <p>Storage ID: {selectedStorage || "None"}</p>
       <p>PSU ID: {selectedPSU || "None"}</p>
 
-      <button onClick={handleBuild}>
-        Build PC
-      </button>
+      <div
+  style={{
+    display: "flex",
+    gap: "12px",
+    marginTop: "20px"
+  }}
+>
+  <button onClick={handleBuild}>
+    🔨 Build PC
+  </button>
+
+  <button onClick={handleAutoBuild}>
+    ✨ Auto Generate Build
+  </button>
+</div>
 
       {result && (
         <div className="summary-card">

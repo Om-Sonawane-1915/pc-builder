@@ -17,7 +17,8 @@ def build_pc(
     motherboard_id: int,
     ram_id: int,
     storage_id: int,
-    psu_id: int
+    psu_id: int,
+    purpose: str = "Gaming"
 ):
     cpu = next((c for c in CPUS if c.id == cpu_id), None)
     gpu = next((g for g in GPUS if g.id == gpu_id), None)
@@ -86,6 +87,28 @@ def build_pc(
     # ==========================
 
     recommendations = []
+
+    # Purpose-based recommendation
+    if purpose == "Gaming":
+        recommendations.append(
+            "🎮 Optimized for gaming performance."
+        )
+    elif purpose == "Programming":
+        recommendations.append(
+            "💻 Better CPU performance is recommended for compiling large projects."
+        )
+    elif purpose == "Streaming":
+        recommendations.append(
+            "📺 NVIDIA GPUs provide excellent hardware video encoding."
+        )
+    elif purpose == "Video Editing":
+        recommendations.append(
+            "🎬 More RAM and a fast NVMe SSD improve editing performance."
+        )
+    elif purpose == "Office":
+        recommendations.append(
+            "📄 This build is more than enough for everyday office work."
+        )
 
     difference = gpu.performance_score - cpu.gaming_score
 

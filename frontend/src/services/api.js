@@ -39,3 +39,11 @@ export async function buildPC(data) {
 
   return response.json();
 }
+
+export async function generateBuild(budget, purpose) {
+  const response = await fetch(
+    `${API_URL}/generate?budget=${budget}&purpose=${purpose}`
+  );
+
+  return response.json();
+}
