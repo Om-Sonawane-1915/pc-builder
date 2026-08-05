@@ -83,12 +83,54 @@ def build_pc(
     fps_4k = int(combined_score * 0.8)
 
     # ==========================
+    # Bottleneck Calculation
+    # ==========================
+
+    bottleneck = abs(cpu.gaming_score - gpu.performance_score)
+
+    if bottleneck <= 5:
+        bottleneck_status = "🟢 Excellent Match"
+    elif bottleneck <= 15:
+        if cpu.gaming_score < gpu.performance_score:
+            bottleneck_status = "🟡 Moderate CPU Bottleneck"
+        else:
+            bottleneck_status = "🟡 Moderate GPU Bottleneck"
+    else:
+        if cpu.gaming_score < gpu.performance_score:
+            bottleneck_status = "🔴 Severe CPU Bottleneck"
+        else:
+            bottleneck_status = "🔴 Severe GPU Bottleneck"
+
+    # ==========================
+    # Overall Build Score
+    # ==========================
+
+    overall_score = int(
+        (gpu.performance_score * 0.40) +
+        (cpu.gaming_score * 0.30) +
+        ((ram.capacity * 2) * 0.15) +
+        ((storage.read_speed / 100) * 0.15)
+    )
+
+    overall_score = min(overall_score, 100)
+
+    if overall_score >= 90:
+        overall_rating = "⭐⭐⭐⭐⭐ Excellent"
+    elif overall_score >= 80:
+        overall_rating = "⭐⭐⭐⭐ Very Good"
+    elif overall_score >= 70:
+        overall_rating = "⭐⭐⭐ Good"
+    elif overall_score >= 60:
+        overall_rating = "⭐⭐ Average"
+    else:
+        overall_rating = "⭐ Entry Level"
+
+    # ==========================
     # Smart Recommendations
     # ==========================
 
     recommendations = []
 
-    # Purpose-based recommendation
     if purpose == "Gaming":
         recommendations.append(
             "🎮 Optimized for gaming performance."
@@ -163,6 +205,15 @@ def build_pc(
             "1080p": fps_1080,
             "1440p": fps_1440,
             "4k": fps_4k
+        },
+
+        "bottleneck": {
+            "percentage": bottleneck,
+            "status": bottleneck_status
+        },
+        "overall_score": {
+            "score": overall_score,
+            "rating": overall_rating
         },
 
         "recommendations": recommendations,

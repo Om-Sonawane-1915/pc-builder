@@ -363,6 +363,45 @@ async function handleAutoBuild() {
             <span>{result.estimated_fps["4k"]} FPS</span>
           </div>
 
+            <h3 style={{ marginTop: "30px" }}>
+            🧩 Bottleneck Analysis
+            </h3>
+          <h3 style={{ marginTop: "30px" }}>
+            🏆 Overall Build Score
+          </h3>
+
+          <div className="summary-item">
+            <span>Score</span>
+            <span>{result.overall_score.score}/100</span>
+          </div>
+
+          <div
+            style={{
+              fontWeight: "bold",
+              fontSize: "20px",
+              marginTop: "10px",
+              color: "#22c55e"
+            }}
+          >
+            {result.overall_score.rating}
+          </div>
+
+
+            <div className="summary-item">
+            <span>Bottleneck</span>
+            <span>{result.bottleneck.percentage}%</span>
+            </div>
+
+        <div
+          style={{
+            marginTop: "10px",
+            fontWeight: "bold",
+            fontSize: "18px"
+          }}
+          >
+          {result.bottleneck.status}
+          </div>
+
         </div>
       )}
 
