@@ -9,7 +9,9 @@ from backend.routers.storage import router as storage_router
 from backend.routers.build import router as build_router
 from backend.routers.generate import router as generate_router
 from backend.routers.compare import router as compare_router
+from backend.routers.saved_builds import router as saved_build_router
 from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
@@ -31,6 +33,7 @@ app.include_router(storage_router)
 app.include_router(build_router)
 app.include_router(generate_router)
 app.include_router(compare_router)
+app.include_router(saved_build_router)
 
 @app.get("/")
 def home():

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import ComponentSelector from "./components/ComponentSelector";
 import "./styles/App.css";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   getCPUs,
   getGPUs,
@@ -11,7 +13,10 @@ import {
   buildPC,
   generateBuild,
   compareCPUs,
-  compareGPUs
+  compareGPUs,
+  saveBuild,
+  getSavedBuilds,
+  deleteSavedBuild
 } from "./services/api";
 
 function App() {
@@ -41,6 +46,8 @@ function App() {
 
   const [comparison, setComparison] = useState(null);
 
+  const [savedBuilds, setSavedBuilds] = useState([]);
+
   useEffect(() => {
     getCPUs().then(setCpus);
     getGPUs().then(setGpus);
@@ -48,6 +55,7 @@ function App() {
     getRAMs().then(setRams);
     getStorages().then(setStorages);
     getPSUs().then(setPsus);
+    getSavedBuilds().then(setSavedBuilds);
   }, []);
 
   function handleBuild() {
@@ -78,11 +86,55 @@ function App() {
       .then(setComparison);
   }
 
-async function handleAutoBuild() {
+  async function handleAutoBuild() {
   const data = await generateBuild(
     budget,
     purpose
   );
+
+  async function handleSaveBuild() {
+
+  if (!result) {
+    alert("Build a PC first.");
+    return;
+  }
+
+  const buildData = {
+    id: Date.now(),
+
+    cpu: result.build.cpu.name,
+    gpu: result.build.gpu.name,
+    motherboard: result.build.motherboard.name,
+    ram: result.build.ram.name,
+    storage: result.build.storage.name,
+    psu: result.build.psu.name,
+
+    cpu_id: selectedCPU,
+    gpu_id: selectedGPU,
+    motherboard_id: selectedMotherboard,
+    ram_id: selectedRAM,
+    storage_id: selectedStorage,
+    psu_id: selectedPSU,
+
+    total_price: result.total_price,
+    purpose: purpose
+  };
+
+  console.log("BUILD DATA:");
+  console.log(buildData);
+
+  const response = await saveBuild(buildData);
+
+  console.log("SERVER RESPONSE:");
+  console.log(response);
+
+  alert("✅ Build Saved!");
+
+  const builds = await getSavedBuilds();
+  setSavedBuilds(builds);
+
+}
+
 
   setSelectedCPU(data.build.cpu.id);
   setSelectedGPU(data.build.gpu.id);
@@ -104,6 +156,146 @@ async function handleAutoBuild() {
   setResult(result);
 }
 
+  async function handleSaveBuild() {
+
+  if (!result) {
+    alert("Build a PC first.");
+    return;
+  }
+
+  const buildData = {
+    id: Date.now(),
+
+    cpu: result.build.cpu.name,
+    gpu: result.build.gpu.name,
+    motherboard: result.build.motherboard.name,
+    ram: result.build.ram.name,
+    storage: result.build.storage.name,
+    psu: result.build.psu.name,
+
+    cpu_id: Number(selectedCPU),
+    gpu_id: Number(selectedGPU),
+    motherboard_id: Number(selectedMotherboard),
+    ram_id: Number(selectedRAM),
+    storage_id: Number(selectedStorage),
+    psu_id: Number(selectedPSU),
+
+    total_price: Number(result.total_price),
+    purpose: purpose
+  };
+
+  console.log(JSON.stringify(buildData, null, 2));
+
+  await saveBuild(buildData);
+
+  const builds = await getSavedBuilds();
+  setSavedBuilds(builds);
+
+  alert("✅ Build Saved!");
+}
+
+  async function handleLoadBuild(build) {
+
+    setSelectedCPU(build.cpu_id);
+    setSelectedGPU(build.gpu_id);
+    setSelectedMotherboard(build.motherboard_id);
+    setSelectedRAM(build.ram_id);
+    setSelectedStorage(build.storage_id);
+    setSelectedPSU(build.psu_id);
+
+    setPurpose(build.purpose);
+
+    const data = await buildPC({
+      cpu_id: build.cpu_id,
+      gpu_id: build.gpu_id,
+      motherboard_id: build.motherboard_id,
+      ram_id: build.ram_id,
+      storage_id: build.storage_id,
+      psu_id: build.psu_id,
+      purpose: build.purpose
+    });
+
+    setResult(data);
+
+  }
+
+      function exportPDF() {
+
+      if (!result) {
+        alert("Please build a PC first.");
+        return;
+      }
+
+      const doc = new jsPDF();
+
+          doc.setFontSize(22);
+      doc.text("PC Builder Report", 20, 20);
+
+      doc.setFontSize(12);
+
+      doc.text(`Budget: Rs. ${budget}`, 20, 35);
+      doc.text(`Purpose: ${purpose}`, 20, 43);
+      doc.text(`Total Price: Rs. ${result.total_price}`, 20, 51);
+
+      autoTable(doc, {
+        startY: 60,
+        head: [["Component", "Selected"]],
+        body: [
+          ["CPU", result.build.cpu.name],
+          ["GPU", result.build.gpu.name],
+          ["Motherboard", result.build.motherboard.name],
+          ["RAM", `${result.build.ram.capacity} GB ${result.build.ram.type}`],
+          ["Storage", result.build.storage.name],
+          ["PSU", `${result.build.psu.wattage}W ${result.build.psu.name}`]
+        ]
+      });
+      
+      const finalY = doc.lastAutoTable.finalY + 15;
+
+      doc.setFontSize(16);
+      doc.text("Build Analysis", 20, finalY);
+
+      doc.setFontSize(12);
+
+      doc.text(
+        `Compatibility: ${
+          result.compatible ? "Compatible" : "Issues Found"
+        }`,
+        20,
+        finalY + 12
+      );
+
+      doc.text(
+        `Power Required: ${result.required_power}W`,
+        20,
+        finalY + 20
+      );
+
+      const cleanTier = result.overall_score.tier.replace(/[^\x00-\x7F]/g, "");
+
+      doc.text(
+        `Build Tier: ${cleanTier}`,
+        20,
+        finalY + 28
+      );
+
+      doc.text(
+        `Overall Score: ${result.overall_score.score}/100`,
+        20,
+        finalY + 36
+      );
+
+      const cleanRating = result.overall_score.rating.replace(/[^\x00-\x7F]/g, "");
+
+      doc.text(
+        `Rating: ${cleanRating}`,
+        20,
+        finalY + 44
+      );
+
+      doc.save("PC_Build_Report.pdf");
+
+  }
   return (
     <div className="container">
       <h1 className="title">🖥️ PC Builder</h1>
@@ -207,6 +399,20 @@ async function handleAutoBuild() {
   <button onClick={handleBuild}>
     🔨 Build PC
   </button>
+
+  <button
+    onClick={handleSaveBuild}
+    style={{ marginLeft: "10px" }}
+  >
+    💾 Save Build
+  </button>
+
+  <button
+  onClick={exportPDF}
+  style={{ marginTop: "10px" }}
+>
+  📄 Export Build Report
+</button>
 
   <button onClick={handleAutoBuild}>
     ✨ Auto Generate Build
@@ -620,6 +826,79 @@ async function handleAutoBuild() {
 
         </div>
       )}
+    
+    <h2 style={{ marginTop: "40px" }}>
+  💾 Saved Builds
+</h2>
+
+{savedBuilds.length === 0 ? (
+  <p>No saved builds.</p>
+) : (
+  savedBuilds.map((build) => (
+    <div
+      key={build.id}
+      style={{
+        border: "1px solid #444",
+        borderRadius: "10px",
+        padding: "15px",
+        marginBottom: "15px",
+        background: "#1f1f1f"
+      }}
+    >
+      <h3>{build.cpu}</h3>
+
+      <p><strong>GPU:</strong> {build.gpu}</p>
+
+      <p><strong>Motherboard:</strong> {build.motherboard}</p>
+
+      <p><strong>RAM:</strong> {build.ram}</p>
+
+      <p><strong>Storage:</strong> {build.storage}</p>
+
+      <p><strong>PSU:</strong> {build.psu}</p>
+
+      <p>
+        <strong>Price:</strong> Rs. {build.total_price}
+      </p>
+
+      <p>
+        <strong>Purpose:</strong> {build.purpose}
+      </p>
+
+      <button
+        onClick={() => handleLoadBuild(build)}
+        style={{
+          marginTop: "10px",
+          marginRight: "10px",
+          background: "#22c55e",
+          color: "white",
+          border: "none",
+          padding: "8px 14px",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        📂 Load
+      </button>
+
+      <button
+        onClick={() => handleDeleteBuild(build.id)}
+        style={{
+          marginTop: "10px",
+          background: "#ef4444",
+          color: "white",
+          border: "none",
+          padding: "8px 14px",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        🗑 Delete
+      </button>
+
+    </div>
+  ))
+)}
 
     </div>
   );

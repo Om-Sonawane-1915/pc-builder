@@ -63,3 +63,43 @@ export async function compareGPUs(id1, id2) {
 
   return response.json();
 }
+
+export async function saveBuild(build) {
+
+  const response = await fetch(
+    `${API_URL}/saved-builds`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(build)
+    }
+  );
+
+  const data = await response.json();
+
+  console.log("STATUS:", response.status);
+  console.log("RESPONSE:", data);
+
+  return data;
+}
+
+export async function getSavedBuilds() {
+  const response = await fetch(
+    `${API_URL}/saved-builds`
+  );
+
+  return response.json();
+}
+
+export async function deleteSavedBuild(id) {
+  const response = await fetch(
+    `${API_URL}/saved-builds/${id}`,
+    {
+      method: "DELETE"
+    }
+  );
+
+  return response.json();
+}
