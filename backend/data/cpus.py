@@ -142,7 +142,35 @@ CPU(
     price=64999
 ),
 
-        CPU(
+CPU(
+    id=15,
+    brand="Intel",
+    name="Core i3-12100F",
+    generation="12th Gen",
+    cores=4,
+    threads=8,
+    socket="LGA1700",
+    power=60,
+    gaming_score=60,
+    productivity_score=58,
+    price=8499
+),
+
+CPU(
+    id=14,
+    brand="Intel",
+    name="Core i5-12400F",
+    generation="12th Gen",
+    cores=6,
+    threads=12,
+    socket="LGA1700",
+    power=65,
+    gaming_score=78,
+    productivity_score=76,
+    price=13999
+),
+
+CPU(
     id=11,
     brand="Intel",
     name="Core i5-12400F",
@@ -185,7 +213,7 @@ CPU(
 ),
 
 CPU(
-    id=14,
+    id=21,
     brand="Intel",
     name="Core i5-14600K",
     generation="14th Gen",
@@ -199,7 +227,7 @@ CPU(
 ),
 
 CPU(
-    id=15,
+    id=22,
     brand="Intel",
     name="Core i7-13700K",
     generation="13th Gen",
@@ -238,6 +266,49 @@ CPU(
     gaming_score=99,
     productivity_score=100,
     price=57999
+),
+
+CPU(
+    id=18,
+    brand="AMD",
+    name="Ryzen 5 5600",
+    generation="Ryzen 5000",
+    cores=6,
+    threads=12,
+    socket="AM4",
+    power=65,
+    gaming_score=72,
+    productivity_score=70,
+    price=10999
+),
+
+CPU(
+    id=19,
+    brand="AMD",
+    name="Ryzen 5 5500",
+    generation="Ryzen 5000",
+    cores=6,
+    threads=12,
+    socket="AM4",
+    power=65,
+    gaming_score=66,
+    productivity_score=64,
+    price=8999
+),
+
+CPU(
+    id=20,
+    brand="AMD",
+    name="Ryzen 5 3600",
+    generation="Ryzen 3000",
+    cores=6,
+    threads=12,
+    socket="AM4",
+    power=65,
+    gaming_score=61,
+    productivity_score=60,
+    price=7999
 )
+
 
 ]

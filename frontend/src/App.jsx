@@ -9,8 +9,9 @@ import {
   getStorages,
   getPSUs,
   buildPC,
-  generateBuild
-
+  generateBuild,
+  compareCPUs,
+  compareGPUs
 } from "./services/api";
 
 function App() {
@@ -31,6 +32,14 @@ function App() {
   const [result, setResult] = useState(null);
   const [budget, setBudget] = useState(100000);
   const [purpose, setPurpose] = useState("Gaming");
+
+  const [cpuCompare1, setCpuCompare1] = useState("");
+  const [cpuCompare2, setCpuCompare2] = useState("");
+
+  const [gpuCompare1, setGpuCompare1] = useState("");
+  const [gpuCompare2, setGpuCompare2] = useState("");
+
+  const [comparison, setComparison] = useState(null);
 
   useEffect(() => {
     getCPUs().then(setCpus);
@@ -54,6 +63,20 @@ function App() {
     setResult(data);
   });
 }
+
+  function handleCPUCompare() {
+    if (!cpuCompare1 || !cpuCompare2) return;
+
+    compareCPUs(cpuCompare1, cpuCompare2)
+      .then(setComparison);
+  }
+
+  function handleGPUCompare() {
+    if (!gpuCompare1 || !gpuCompare2) return;
+
+    compareGPUs(gpuCompare1, gpuCompare2)
+      .then(setComparison);
+  }
 
 async function handleAutoBuild() {
   const data = await generateBuild(
@@ -190,6 +213,179 @@ async function handleAutoBuild() {
   </button>
 </div>
 
+            <hr />
+
+    <h2 style={{ marginTop: "40px" }}>
+      ⚔️ Component Comparison
+    </h2>
+
+    <div className="budget-card">
+
+      <h3>🧠 Compare CPUs</h3>
+
+      <select
+        value={cpuCompare1}
+        onChange={(e) => setCpuCompare1(Number(e.target.value))}
+      >
+        <option value="">Select CPU 1</option>
+
+        {cpus.map(cpu => (
+          <option key={cpu.id} value={cpu.id}>
+            {cpu.name}
+          </option>
+        ))}
+      </select>
+
+      <select
+        value={cpuCompare2}
+        onChange={(e) => setCpuCompare2(Number(e.target.value))}
+      >
+        <option value="">Select CPU 2</option>
+
+        {cpus.map(cpu => (
+          <option key={cpu.id} value={cpu.id}>
+            {cpu.name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        style={{ marginTop: "12px" }}
+        onClick={handleCPUCompare}
+      >
+        Compare CPUs
+      </button>
+
+    </div>
+
+    <div className="budget-card" style={{ marginTop: "25px" }}>
+
+      <h3>🎮 Compare GPUs</h3>
+
+      <select
+        value={gpuCompare1}
+        onChange={(e) => setGpuCompare1(Number(e.target.value))}
+      >
+        <option value="">Select GPU 1</option>
+
+        {gpus.map(gpu => (
+          <option key={gpu.id} value={gpu.id}>
+            {gpu.name}
+          </option>
+        ))}
+      </select>
+
+      <select
+        value={gpuCompare2}
+        onChange={(e) => setGpuCompare2(Number(e.target.value))}
+      >
+        <option value="">Select GPU 2</option>
+
+        {gpus.map(gpu => (
+          <option key={gpu.id} value={gpu.id}>
+            {gpu.name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        style={{ marginTop: "12px" }}
+        onClick={handleGPUCompare}
+      >
+        Compare GPUs
+      </button>
+
+    </div>
+
+    {comparison && (
+
+      <div
+        className="summary-card"
+        style={{ marginTop: "30px" }}
+      >
+
+        <h2>🏆 Comparison Result</h2>
+
+        <div className="summary-item">
+          <span>Name</span>
+          <span>{comparison.component1.name}</span>
+          <span>{comparison.component2.name}</span>
+        </div>
+
+        {"gaming_score" in comparison.component1 && (
+
+          <>
+            <div className="summary-item">
+              <span>Gaming Score</span>
+              <span>{comparison.component1.gaming_score}</span>
+              <span>{comparison.component2.gaming_score}</span>
+            </div>
+
+            <div className="summary-item">
+              <span>Productivity</span>
+              <span>{comparison.component1.productivity_score}</span>
+              <span>{comparison.component2.productivity_score}</span>
+            </div>
+
+            <div className="summary-item">
+              <span>Cores</span>
+              <span>{comparison.component1.cores}</span>
+              <span>{comparison.component2.cores}</span>
+            </div>
+
+            <div className="summary-item">
+              <span>Threads</span>
+              <span>{comparison.component1.threads}</span>
+              <span>{comparison.component2.threads}</span>
+            </div>
+          </>
+
+        )}
+
+        {"performance_score" in comparison.component1 && (
+
+          <>
+            <div className="summary-item">
+              <span>Performance</span>
+              <span>{comparison.component1.performance_score}</span>
+              <span>{comparison.component2.performance_score}</span>
+            </div>
+
+            <div className="summary-item">
+              <span>VRAM</span>
+              <span>{comparison.component1.memory} GB</span>
+              <span>{comparison.component2.memory} GB</span>
+            </div>
+
+            <div className="summary-item">
+              <span>Ray Tracing</span>
+              <span>{comparison.component1.ray_tracing_score}</span>
+              <span>{comparison.component2.ray_tracing_score}</span>
+            </div>
+          </>
+
+        )}
+
+        <div className="summary-item">
+          <span>Price</span>
+          <span>₹{comparison.component1.price}</span>
+          <span>₹{comparison.component2.price}</span>
+        </div>
+
+        <h2
+          style={{
+            color: "#22c55e",
+            marginTop: "20px",
+            textAlign: "center"
+          }}
+        >
+          🥇 Winner: {comparison.winner}
+        </h2>
+
+      </div>
+
+    )}
+
       {result && (
         <div className="summary-card">
 
@@ -315,20 +511,20 @@ async function handleAutoBuild() {
           </p>
 
           <h3 style={{ marginTop: "25px" }}>
-  💡 Smart Recommendations
-</h3>
+          💡 Smart Recommendations
+        </h3>
 
-{result.recommendations.map((item, index) => (
-  <p
-    key={index}
-    style={{
-      margin: "8px 0",
-      lineHeight: "1.6"
-    }}
-  >
-    {item}
-  </p>
-))}
+        {result.recommendations.map((item, index) => (
+          <p
+            key={index}
+            style={{
+              margin: "8px 0",
+              lineHeight: "1.6"
+            }}
+          >
+            {item}
+          </p>
+        ))}
 
           {result.total_price <= budget ? (
             <div className="budget-success">
@@ -345,34 +541,46 @@ async function handleAutoBuild() {
           )}
 
           <h3 style={{ marginTop: "30px" }}>
-            🎮 Estimated Gaming Performance
-          </h3>
+            🎮 Game Performance
+            </h3>
 
-          <div className="summary-item">
-            <span>1080p Ultra</span>
-            <span>{result.estimated_fps["1080p"]} FPS</span>
-          </div>
+          {Object.entries(result.game_fps).map(([game, fps]) => {
+            let rating = "";
 
-          <div className="summary-item">
-            <span>1440p High</span>
-            <span>{result.estimated_fps["1440p"]} FPS</span>
-          </div>
+          if (fps >= 120) {
+            rating = "🔥 Ultra Smooth";
+          } else if (fps >= 90) {
+            rating = "🟢 Excellent";
+          } else if (fps >= 60) {
+            rating = "🟡 Very Good";
+          } else if (fps >= 40) {
+            rating = "🟠 Playable";
+          } else {
+            rating = "🔴 Low FPS";
+          }
 
-          <div className="summary-item">
-            <span>4K Ultra</span>
-            <span>{result.estimated_fps["4k"]} FPS</span>
-          </div>
+            return (
+              <div className="summary-item" key={game}>
+                <span>{game}</span>
+                <span>
+                  {fps} FPS &nbsp; {rating}
+                </span>
+              </div>
+            );
+          })}
 
             <h3 style={{ marginTop: "30px" }}>
-            🧩 Bottleneck Analysis
-            </h3>
-          <h3 style={{ marginTop: "30px" }}>
-            🏆 Overall Build Score
+            🏆 Overall Build
           </h3>
 
           <div className="summary-item">
             <span>Score</span>
             <span>{result.overall_score.score}/100</span>
+          </div>
+
+          <div className="summary-item">
+            <span>Tier</span>
+            <span>{result.overall_score.tier}</span>
           </div>
 
           <div
@@ -386,11 +594,19 @@ async function handleAutoBuild() {
             {result.overall_score.rating}
           </div>
 
+          <h3 style={{ marginTop: "30px" }}>
+            🧩 Bottleneck Analysis
+          </h3>
 
-            <div className="summary-item">
+          <div className="summary-item">
             <span>Bottleneck</span>
             <span>{result.bottleneck.percentage}%</span>
-            </div>
+          </div>
+
+          <div className="summary-item">
+            <span>Status</span>
+            <span>{result.bottleneck.status}</span>
+          </div>
 
         <div
           style={{

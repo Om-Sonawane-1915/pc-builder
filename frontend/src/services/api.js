@@ -47,3 +47,19 @@ export async function generateBuild(budget, purpose) {
 
   return response.json();
 }
+
+export async function compareCPUs(id1, id2) {
+  const response = await fetch(
+    `${API_URL}/compare/cpu?id1=${id1}&id2=${id2}`
+  );
+
+  return response.json();
+}
+
+export async function compareGPUs(id1, id2) {
+  const response = await fetch(
+    `${API_URL}/compare/gpu?id1=${id1}&id2=${id2}`
+  );
+
+  return response.json();
+}

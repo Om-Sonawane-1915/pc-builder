@@ -81,6 +81,19 @@ def build_pc(
     fps_1080 = int(combined_score * 2.1)
     fps_1440 = int(combined_score * 1.45)
     fps_4k = int(combined_score * 0.8)
+    # ==========================
+    # Game FPS Estimates
+    # ==========================
+
+    game_fps = {
+        "Valorant": int(fps_1080 * 2.2),
+        "CS2": int(fps_1080 * 1.8),
+        "Fortnite": int(fps_1080 * 1.1),
+        "GTA V": int(fps_1080 * 0.95),
+        "Red Dead Redemption 2": int(fps_1080 * 0.65),
+        "Cyberpunk 2077": int(fps_1080 * 0.55)
+    }
+
 
     # ==========================
     # Bottleneck Calculation
@@ -124,6 +137,21 @@ def build_pc(
         overall_rating = "⭐⭐ Average"
     else:
         overall_rating = "⭐ Entry Level"
+
+    # ==========================
+    # Build Tier
+    # ==========================
+
+    if overall_score >= 95:
+        build_tier = "🏆 S Tier"
+    elif overall_score >= 85:
+        build_tier = "🥇 A Tier"
+    elif overall_score >= 75:
+        build_tier = "🥈 B Tier"
+    elif overall_score >= 65:
+        build_tier = "🥉 C Tier"
+    else:
+        build_tier = "📦 Entry Tier"
 
     # ==========================
     # Smart Recommendations
@@ -207,14 +235,17 @@ def build_pc(
             "4k": fps_4k
         },
 
+        "game_fps": game_fps,
+        
         "bottleneck": {
             "percentage": bottleneck,
             "status": bottleneck_status
         },
         "overall_score": {
-            "score": overall_score,
-            "rating": overall_rating
-        },
+        "score": overall_score,
+        "rating": overall_rating,
+        "tier": build_tier
+    },
 
         "recommendations": recommendations,
 
