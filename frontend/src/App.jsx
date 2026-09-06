@@ -1,8 +1,11 @@
+
 import { useEffect, useState } from "react";
 import ComponentSelector from "./components/ComponentSelector";
-import "./styles/App.css";
+import "./App.css";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import BuildSelectors from "./components/BuildSelectors";
+import CompareSection from "./components/CompareSection";
 import {
   getCPUs,
   getGPUs,
@@ -59,17 +62,34 @@ function App() {
   }, []);
 
   function handleBuild() {
+  if (
+    !selectedCPU ||
+    !selectedGPU ||
+    !selectedMotherboard ||
+    !selectedRAM ||
+    !selectedStorage ||
+    !selectedPSU
+  ) {
+    alert("Please select all components before building your PC.");
+    return;
+  }
+
   buildPC({
-    cpu_id: selectedCPU,
-    gpu_id: selectedGPU,
-    motherboard_id: selectedMotherboard,
-    ram_id: selectedRAM,
-    storage_id: selectedStorage,
-    psu_id: selectedPSU,
+    cpu_id: Number(selectedCPU),
+    gpu_id: Number(selectedGPU),
+    motherboard_id: Number(selectedMotherboard),
+    ram_id: Number(selectedRAM),
+    storage_id: Number(selectedStorage),
+    psu_id: Number(selectedPSU),
     purpose: purpose
-  }).then((data) => {
-    setResult(data);
-  });
+  })
+    .then((data) => {
+      setResult(data);
+    })
+    .catch((error) => {
+      console.error("Build failed:", error);
+      alert("Failed to build PC. Please check your selections.");
+    });
 }
 
   function handleCPUCompare() {
@@ -92,50 +112,6 @@ function App() {
     purpose
   );
 
-  async function handleSaveBuild() {
-
-  if (!result) {
-    alert("Build a PC first.");
-    return;
-  }
-
-  const buildData = {
-    id: Date.now(),
-
-    cpu: result.build.cpu.name,
-    gpu: result.build.gpu.name,
-    motherboard: result.build.motherboard.name,
-    ram: result.build.ram.name,
-    storage: result.build.storage.name,
-    psu: result.build.psu.name,
-
-    cpu_id: selectedCPU,
-    gpu_id: selectedGPU,
-    motherboard_id: selectedMotherboard,
-    ram_id: selectedRAM,
-    storage_id: selectedStorage,
-    psu_id: selectedPSU,
-
-    total_price: result.total_price,
-    purpose: purpose
-  };
-
-  console.log("BUILD DATA:");
-  console.log(buildData);
-
-  const response = await saveBuild(buildData);
-
-  console.log("SERVER RESPONSE:");
-  console.log(response);
-
-  alert("✅ Build Saved!");
-
-  const builds = await getSavedBuilds();
-  setSavedBuilds(builds);
-
-}
-
-
   setSelectedCPU(data.build.cpu.id);
   setSelectedGPU(data.build.gpu.id);
   setSelectedMotherboard(data.build.motherboard.id);
@@ -143,7 +119,7 @@ function App() {
   setSelectedStorage(data.build.storage.id);
   setSelectedPSU(data.build.psu.id);
 
-  const result = await buildPC({
+  const buildResult = await buildPC({
     cpu_id: data.build.cpu.id,
     gpu_id: data.build.gpu.id,
     motherboard_id: data.build.motherboard.id,
@@ -153,7 +129,7 @@ function App() {
     purpose: purpose
   });
 
-  setResult(result);
+  setResult(buildResult);
 }
 
   async function handleSaveBuild() {
@@ -218,6 +194,20 @@ function App() {
     setResult(data);
 
   }
+
+  async function handleDeleteBuild(buildId) {
+  try {
+    await deleteSavedBuild(buildId);
+
+    const builds = await getSavedBuilds();
+    setSavedBuilds(builds);
+
+    alert("🗑 Build deleted!");
+  } catch (error) {
+    console.error("Delete failed:", error);
+    alert("Failed to delete build.");
+  }
+}
 
       function exportPDF() {
 
@@ -334,47 +324,32 @@ function App() {
 
       <div className="grid">
 
-        <ComponentSelector
-          title="CPU"
-          items={cpus}
-          selected={selectedCPU}
-          setSelected={setSelectedCPU}
-        />
+        <BuildSelectors
+  cpus={cpus}
+  gpus={gpus}
+  motherboards={motherboards}
+  rams={rams}
+  storages={storages}
+  psus={psus}
 
-        <ComponentSelector
-          title="GPU"
-          items={gpus}
-          selected={selectedGPU}
-          setSelected={setSelectedGPU}
-        />
+  selectedCPU={selectedCPU}
+  setSelectedCPU={setSelectedCPU}
 
-        <ComponentSelector
-          title="Motherboard"
-          items={motherboards}
-          selected={selectedMotherboard}
-          setSelected={setSelectedMotherboard}
-        />
+  selectedGPU={selectedGPU}
+  setSelectedGPU={setSelectedGPU}
 
-        <ComponentSelector
-          title="RAM"
-          items={rams}
-          selected={selectedRAM}
-          setSelected={setSelectedRAM}
-        />
+  selectedMotherboard={selectedMotherboard}
+  setSelectedMotherboard={setSelectedMotherboard}
 
-        <ComponentSelector
-          title="Storage"
-          items={storages}
-          selected={selectedStorage}
-          setSelected={setSelectedStorage}
-        />
+  selectedRAM={selectedRAM}
+  setSelectedRAM={setSelectedRAM}
 
-        <ComponentSelector
-          title="PSU"
-          items={psus}
-          selected={selectedPSU}
-          setSelected={setSelectedPSU}
-        />
+  selectedStorage={selectedStorage}
+  setSelectedStorage={setSelectedStorage}
+
+  selectedPSU={selectedPSU}
+  setSelectedPSU={setSelectedPSU}
+/>
 
       </div>
 
@@ -592,240 +567,413 @@ function App() {
 
     )}
 
-      {result && (
-        <div className="summary-card">
+    {result && (
+  <div className="analysis-section">
 
-          <h2>🖥️ Build Summary</h2>
+    {/* ANALYSIS HEADER */}
 
-          <p className="compatible">
-            {result.compatible ? "✅ Compatible" : "❌ Not Compatible"}
-          </p>
+    <div className="analysis-header">
+      <div>
+        <h2>📊 Build Analysis</h2>
+        <p>Your complete PC performance and compatibility report.</p>
+      </div>
 
-          {result.warnings.length > 0 ? (
-            <div>
+      <div className="score-badge">
+        <span>Overall Score</span>
+        <strong>{result.overall_score?.score ?? 0}/100</strong>
+      </div>
+    </div>
 
-              <h3>Warnings</h3>
 
-              {result.warnings.map((warning, index) => (
-                <p
-                  key={index}
-                  style={{ color: "#ef4444" }}
-                >
-                  ❌ {warning}
-                </p>
-              ))}
+    {/* BUILD STATUS */}
 
-            </div>
-          ) : (
+    <div className="analysis-grid">
 
-            <div>
+      <div className="analysis-card compatibility-card">
+        <span className="analysis-icon">🔧</span>
 
-              <h3>System Checks</h3>
+        <div>
+          <h3>Compatibility</h3>
 
-              <p>✅ CPU socket matches motherboard</p>
-              <p>✅ RAM type is supported</p>
-              <p>✅ PSU wattage is sufficient</p>
-
-            </div>
-
-          )}
-
-          <div className="summary-item">
-  <span>🧠 CPU</span>
-
-  <span>
-    <strong>{result.build.cpu.name}</strong>
-    <br />
-    {result.build.cpu.cores} Cores • {result.build.cpu.threads} Threads
-    <br />
-    Socket: {result.build.cpu.socket}
-    <br />
-    Power: {result.build.cpu.power}W
-    <br />
-    Gaming Score: {result.build.cpu.gaming_score}/100
-  </span>
-</div>
-
-<div className="summary-item">
-  <span>🎮 GPU</span>
-
-  <span>
-    <strong>{result.build.gpu.name}</strong>
-    <br />
-    VRAM: {result.build.gpu.memory} GB
-    <br />
-    Power: {result.build.gpu.power}W
-    <br />
-    Performance Score: {result.build.gpu.performance_score}/100
-  </span>
-</div>
-
-<div className="summary-item">
-  <span>🟩 Motherboard</span>
-
-  <span>
-    <strong>{result.build.motherboard.name}</strong>
-    <br />
-    Socket: {result.build.motherboard.socket}
-    <br />
-    RAM Type: {result.build.motherboard.ram_type}
-  </span>
-</div>
-
-<div className="summary-item">
-  <span>⚡ RAM</span>
-
-  <span>
-    <strong>{result.build.ram.name}</strong>
-    <br />
-    {result.build.ram.capacity} GB
-    <br />
-    {result.build.ram.speed} MHz
-    <br />
-    {result.build.ram.type}
-  </span>
-</div>
-
-<div className="summary-item">
-  <span>💾 Storage</span>
-
-  <span>
-    <strong>{result.build.storage.name}</strong>
-    <br />
-    Capacity: {result.build.storage.capacity} GB
-    <br />
-    Type: {result.build.storage.type}
-  </span>
-</div>
-
-<div className="summary-item">
-  <span>🔌 PSU</span>
-
-  <span>
-    <strong>{result.build.psu.name}</strong>
-    <br />
-    Wattage: {result.build.psu.wattage}W
-  </span>
-</div>
-
-          <p className="power">
-            Required Power: {result.required_power} W
-          </p>
-
-          <p className="total">
-            Total Price: ₹{result.total_price}
-          </p>
-
-          <h3 style={{ marginTop: "25px" }}>
-          💡 Smart Recommendations
-        </h3>
-
-        {result.recommendations.map((item, index) => (
-          <p
-            key={index}
-            style={{
-              margin: "8px 0",
-              lineHeight: "1.6"
-            }}
+          <strong
+            className={
+              result.compatible
+                ? "status-good"
+                : "status-bad"
+            }
           >
-            {item}
-          </p>
-        ))}
+            {result.compatible
+              ? "Compatible"
+              : "Issues Found"}
+          </strong>
+        </div>
+      </div>
 
-          {result.total_price <= budget ? (
-            <div className="budget-success">
-              🟢 Under Budget
-              <br />
-              Remaining: ₹{budget - result.total_price}
-            </div>
-          ) : (
-            <div className="budget-danger">
-              🔴 Over Budget
-              <br />
-              Exceeded by: ₹{result.total_price - budget}
-            </div>
-          )}
 
-          <h3 style={{ marginTop: "30px" }}>
-            🎮 Game Performance
-            </h3>
+      <div className="analysis-card">
+        <span className="analysis-icon">⚡</span>
 
-          {Object.entries(result.game_fps).map(([game, fps]) => {
+        <div>
+          <h3>Power Required</h3>
+
+          <strong>
+            {result.required_power}W
+          </strong>
+        </div>
+      </div>
+
+
+      <div className="analysis-card">
+        <span className="analysis-icon">💰</span>
+
+        <div>
+          <h3>Total Price</h3>
+
+          <strong>
+            ₹{Number(result.total_price).toLocaleString("en-IN")}
+          </strong>
+        </div>
+      </div>
+
+
+      <div className="analysis-card">
+        <span className="analysis-icon">🏆</span>
+
+        <div>
+          <h3>Build Tier</h3>
+
+          <strong>
+            {result.overall_score.tier}
+          </strong>
+        </div>
+      </div>
+
+    </div>
+
+
+    {/* SELECTED COMPONENTS */}
+
+    <div className="analysis-panel">
+
+      <h3>🧩 Selected Components</h3>
+
+      <div className="component-summary-grid">
+
+        <div className="component-summary">
+          <span>🧠 CPU</span>
+
+          <strong>
+            {result.build.cpu.name}
+          </strong>
+
+          <small>
+            {result.build.cpu.cores} Cores •{" "}
+            {result.build.cpu.threads} Threads
+          </small>
+
+          <small>
+            Gaming Score:{" "}
+            {result.build.cpu.gaming_score}/100
+          </small>
+        </div>
+
+
+        <div className="component-summary">
+          <span>🎮 GPU</span>
+
+          <strong>
+            {result.build.gpu.name}
+          </strong>
+
+          <small>
+            VRAM: {result.build.gpu.memory} GB
+          </small>
+
+          <small>
+            Performance:{" "}
+            {result.build.gpu.performance_score}/100
+          </small>
+        </div>
+
+
+        <div className="component-summary">
+          <span>🟩 Motherboard</span>
+
+          <strong>
+            {result.build.motherboard.name}
+          </strong>
+
+          <small>
+            Socket: {result.build.motherboard.socket}
+          </small>
+
+          <small>
+            RAM: {result.build.motherboard.ram_type}
+          </small>
+        </div>
+
+
+        <div className="component-summary">
+          <span>⚡ RAM</span>
+
+          <strong>
+            {result.build.ram.name}
+          </strong>
+
+          <small>
+            {result.build.ram.capacity} GB
+          </small>
+
+          <small>
+            {result.build.ram.speed} MHz
+          </small>
+        </div>
+
+
+        <div className="component-summary">
+          <span>💾 Storage</span>
+
+          <strong>
+            {result.build.storage.name}
+          </strong>
+
+          <small>
+            {result.build.storage.capacity} GB
+          </small>
+
+          <small>
+            {result.build.storage.type}
+          </small>
+        </div>
+
+
+        <div className="component-summary">
+          <span>🔌 PSU</span>
+
+          <strong>
+            {result.build.psu.name}
+          </strong>
+
+          <small>
+            {result.build.psu.wattage}W
+          </small>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* BUDGET */}
+
+    <div className="analysis-panel">
+
+      <h3>💰 Budget Status</h3>
+
+      {result.total_price <= budget ? (
+
+        <div className="budget-status success">
+
+          <strong>🟢 Under Budget</strong>
+
+          <span>
+            ₹{(budget - result.total_price).toLocaleString("en-IN")} remaining
+          </span>
+
+        </div>
+
+      ) : (
+
+        <div className="budget-status danger">
+
+          <strong>🔴 Over Budget</strong>
+
+          <span>
+            ₹{(result.total_price - budget).toLocaleString("en-IN")} over budget
+          </span>
+
+        </div>
+
+      )}
+
+    </div>
+
+
+    {/* GAME PERFORMANCE */}
+
+    <div className="analysis-panel">
+
+      <h3>🎮 Game Performance</h3>
+
+      <div className="game-grid">
+
+        {Object.entries(result.game_fps).map(
+          ([game, fps]) => {
+
             let rating = "";
+            let ratingClass = "";
 
-          if (fps >= 120) {
-            rating = "🔥 Ultra Smooth";
-          } else if (fps >= 90) {
-            rating = "🟢 Excellent";
-          } else if (fps >= 60) {
-            rating = "🟡 Very Good";
-          } else if (fps >= 40) {
-            rating = "🟠 Playable";
-          } else {
-            rating = "🔴 Low FPS";
-          }
+            if (fps >= 120) {
+              rating = "🔥 Ultra Smooth";
+              ratingClass = "fps-excellent";
+            } else if (fps >= 90) {
+              rating = "🟢 Excellent";
+              ratingClass = "fps-good";
+            } else if (fps >= 60) {
+              rating = "🟡 Very Good";
+              ratingClass = "fps-average";
+            } else if (fps >= 40) {
+              rating = "🟠 Playable";
+              ratingClass = "fps-playable";
+            } else {
+              rating = "🔴 Low FPS";
+              ratingClass = "fps-low";
+            }
 
             return (
-              <div className="summary-item" key={game}>
-                <span>{game}</span>
-                <span>
-                  {fps} FPS &nbsp; {rating}
+              <div
+                className="game-card"
+                key={game}
+              >
+                <strong>{game}</strong>
+
+                <span className="fps-number">
+                  {fps} FPS
+                </span>
+
+                <span className={ratingClass}>
+                  {rating}
                 </span>
               </div>
             );
-          })}
 
-            <h3 style={{ marginTop: "30px" }}>
-            🏆 Overall Build
-          </h3>
+          }
+        )}
 
-          <div className="summary-item">
-            <span>Score</span>
-            <span>{result.overall_score.score}/100</span>
-          </div>
+      </div>
 
-          <div className="summary-item">
-            <span>Tier</span>
-            <span>{result.overall_score.tier}</span>
-          </div>
+    </div>
 
-          <div
-            style={{
-              fontWeight: "bold",
-              fontSize: "20px",
-              marginTop: "10px",
-              color: "#22c55e"
-            }}
-          >
-            {result.overall_score.rating}
-          </div>
 
-          <h3 style={{ marginTop: "30px" }}>
-            🧩 Bottleneck Analysis
-          </h3>
+    {/* RESOLUTION PERFORMANCE */}
 
-          <div className="summary-item">
-            <span>Bottleneck</span>
-            <span>{result.bottleneck.percentage}%</span>
-          </div>
+    <div className="analysis-panel">
 
-          <div className="summary-item">
-            <span>Status</span>
-            <span>{result.bottleneck.status}</span>
-          </div>
+      <h3>🖥 Estimated Gaming Performance</h3>
 
-        <div
-          style={{
-            marginTop: "10px",
-            fontWeight: "bold",
-            fontSize: "18px"
-          }}
-          >
-          {result.bottleneck.status}
-          </div>
+      <div className="resolution-grid">
 
+        <div className="resolution-card">
+          <span>1080p</span>
+
+          <strong>
+            {result.estimated_fps["1080p"]} FPS
+          </strong>
         </div>
-      )}
+
+
+        <div className="resolution-card">
+          <span>1440p</span>
+
+          <strong>
+            {result.estimated_fps["1440p"]} FPS
+          </strong>
+        </div>
+
+
+        <div className="resolution-card">
+          <span>4K</span>
+
+          <strong>
+            {result.estimated_fps["4k"]} FPS
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* OVERALL SCORE */}
+
+    <div className="analysis-panel score-panel">
+
+      <h3>🏆 Overall Build Rating</h3>
+
+      <div className="big-score">
+        {result.overall_score?.score ?? 0}
+
+        <span>/100</span>
+      </div>
+
+      <div className="tier-text">
+        {result.overall_score.tier}
+      </div>
+
+      <div className="rating-text">
+        {result.overall_score.rating}
+      </div>
+
+    </div>
+
+
+    {/* BOTTLENECK */}
+
+    <div className="analysis-panel">
+
+      <h3>🧩 Bottleneck Analysis</h3>
+
+      <div className="bottleneck-box">
+
+        <div>
+          <span>Bottleneck Difference</span>
+
+          <strong>
+            {result.bottleneck.percentage}%
+          </strong>
+        </div>
+
+
+        <div>
+          <span>Status</span>
+
+          <strong>
+            {result.bottleneck.status}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* RECOMMENDATIONS */}
+
+    <div className="analysis-panel">
+
+      <h3>💡 Smart Recommendations</h3>
+
+      <div className="recommendation-list">
+
+        {result.recommendations.map(
+          (item, index) => (
+
+            <div
+              className="recommendation"
+              key={index}
+            >
+              {item}
+            </div>
+
+          )
+        )}
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     
     <h2 style={{ marginTop: "40px" }}>
   💾 Saved Builds
@@ -835,16 +983,11 @@ function App() {
   <p>No saved builds.</p>
 ) : (
   savedBuilds.map((build) => (
-    <div
-      key={build.id}
-      style={{
-        border: "1px solid #444",
-        borderRadius: "10px",
-        padding: "15px",
-        marginBottom: "15px",
-        background: "#1f1f1f"
-      }}
-    >
+          <div
+        key={build.id}
+        className="saved-build-card"
+      >
+    
       <h3>{build.cpu}</h3>
 
       <p><strong>GPU:</strong> {build.gpu}</p>

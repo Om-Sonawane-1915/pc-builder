@@ -1,10 +1,12 @@
-body {
+html,
+body,
+#root {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
 }
 
-h1 {
-  text-align: center;
-  margin-top: 40px;
+body {
+  background: #eef2f7;
 }

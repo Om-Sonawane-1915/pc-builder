@@ -23,86 +23,163 @@ function ComponentSelector({
   );
 
   const filteredItems = items.filter((item) =>
-    item[labelKey]
+    String(item[labelKey] || "")
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
+  function handleChange(e) {
+    const value = e.target.value;
+
+    if (value === "") {
+      setSelected("");
+    } else {
+      setSelected(Number(value));
+    }
+  }
+
   return (
     <div className="component-card">
-      <h2>
-        {icons[title]} {title}
-      </h2>
 
+      {/* Component Header */}
+      <div className="component-header">
+
+        <h3 className="component-title">
+          {icons[title] || "🧩"} {title}
+        </h3>
+
+        {current && (
+          <span className="selected-badge">
+            Selected
+          </span>
+        )}
+
+      </div>
+
+      {/* Selected Component */}
       {current ? (
-        <>
+        <div className="selected-component">
+
           <p className="selected-name">
             {current[labelKey]}
           </p>
 
           <p className="selected-price">
-            ₹{current.price.toLocaleString()}
+            ₹{Number(current.price || 0).toLocaleString("en-IN")}
           </p>
 
-          {"gaming_score" in current && (
-            <p>
-              🎮 Gaming Score: {current.gaming_score}/100
-            </p>
-          )}
+          <div className="component-stats">
 
-          {"productivity_score" in current && (
-            <p>
-              💻 Productivity: {current.productivity_score}/100
-            </p>
-          )}
+            {"gaming_score" in current && (
+              <div className="stat">
+                <span>🎮 Gaming</span>
+                <strong>
+                  {current.gaming_score}/100
+                </strong>
+              </div>
+            )}
 
-          {"performance_score" in current && (
-            <p>
-              🚀 Performance: {current.performance_score}/100
-            </p>
-          )}
+            {"productivity_score" in current && (
+              <div className="stat">
+                <span>💻 Productivity</span>
+                <strong>
+                  {current.productivity_score}/100
+                </strong>
+              </div>
+            )}
 
-          {"memory" in current && (
-            <p>
-              🧠 VRAM: {current.memory} GB
-            </p>
-          )}
+            {"performance_score" in current && (
+              <div className="stat">
+                <span>🚀 Performance</span>
+                <strong>
+                  {current.performance_score}/100
+                </strong>
+              </div>
+            )}
 
-          {"capacity" in current && (
-            <p>
-              💾 Capacity: {current.capacity} GB
-            </p>
-          )}
+            {"ray_tracing_score" in current && (
+              <div className="stat">
+                <span>✨ Ray Tracing</span>
+                <strong>
+                  {current.ray_tracing_score}/100
+                </strong>
+              </div>
+            )}
 
-          {"wattage" in current && (
-            <p>
-              ⚡ Wattage: {current.wattage}W
-            </p>
-          )}
-        </>
+            {"memory" in current && (
+              <div className="stat">
+                <span>🧠 VRAM</span>
+                <strong>
+                  {current.memory} GB
+                </strong>
+              </div>
+            )}
+
+            {"capacity" in current && (
+              <div className="stat">
+                <span>💾 Capacity</span>
+                <strong>
+                  {current.capacity} GB
+                </strong>
+              </div>
+            )}
+
+            {"wattage" in current && (
+              <div className="stat">
+                <span>⚡ Wattage</span>
+                <strong>
+                  {current.wattage}W
+                </strong>
+              </div>
+            )}
+
+            {"cores" in current && (
+              <div className="stat">
+                <span>⚙️ Cores</span>
+                <strong>
+                  {current.cores}
+                </strong>
+              </div>
+            )}
+
+            {"threads" in current && (
+              <div className="stat">
+                <span>🧵 Threads</span>
+                <strong>
+                  {current.threads}
+                </strong>
+              </div>
+            )}
+
+          </div>
+
+        </div>
       ) : (
-        <p className="not-selected">
-          Nothing selected
-        </p>
+        <div className="not-selected">
+          <span>📦</span>
+          <p>Nothing selected</p>
+        </div>
       )}
 
-      <input
-        type="text"
-        placeholder={`Search ${title}`}
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "10px",
-          borderRadius: "8px"
-        }}
-      />
+      {/* Search */}
+      <div className="component-search">
 
+        <input
+          type="text"
+          placeholder={`🔍 Search ${title}...`}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+      </div>
+
+      {/* Dropdown */}
       <select
         value={selected}
-        onChange={(e) => setSelected(Number(e.target.value))}
+        onChange={handleChange}
+        className="component-select"
       >
+
         <option value="">
           Select {title}
         </option>
@@ -112,10 +189,20 @@ function ComponentSelector({
             key={`${title}-${item.id}`}
             value={item.id}
           >
-            {item[labelKey]}
+            {item[labelKey]} - ₹
+            {Number(item.price || 0).toLocaleString("en-IN")}
           </option>
         ))}
+
       </select>
+
+      {/* No Search Results */}
+      {filteredItems.length === 0 && (
+        <p className="no-results">
+          No {title} found.
+        </p>
+      )}
+
     </div>
   );
 }
