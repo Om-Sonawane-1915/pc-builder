@@ -7,34 +7,24 @@ function BuildSelectors({
   rams,
   storages,
   psus,
-
   selectedCPU,
   setSelectedCPU,
-
   selectedGPU,
   setSelectedGPU,
-
   selectedMotherboard,
   setSelectedMotherboard,
-
   selectedRAM,
   setSelectedRAM,
-
   selectedStorage,
   setSelectedStorage,
-
   selectedPSU,
   setSelectedPSU
 }) {
-
   return (
-
     <div className="section-card">
-
       <h2>🖥 Build Your PC</h2>
 
       <div className="selector-grid">
-
         <ComponentSelector
           title="CPU"
           items={cpus}
@@ -76,11 +66,8 @@ function BuildSelectors({
           selected={selectedPSU}
           setSelected={setSelectedPSU}
         />
-
       </div>
-
     </div>
-
   );
 }
 
